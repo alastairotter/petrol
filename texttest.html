@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="">
+    <script src="../lib/d3.v4.min.js"></script>
+    
+
+    <style>
+        body { 
+            font-family: "Roboto Condensed", Arial, "Helvetica Neue", Helvetica, sans-serif;
+            background: #000;
+            margin:0;
+        }
+        
+        .boldtext { 
+            font-size:300%;
+            font-weight: 700; 
+        }
+        
+        .text {
+            fill:#fff;
+            stroke:none;
+            font-size: 120%;
+            
+        }
+    </style>
+</head>
+
+<body>
+   
+    <script>
+        
+        var width = window.innerWidth,
+            height = window.innerHeight;
+        
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width * 0.98)
+            .attr("height", height * 0.99)
+        
+        
+        
+        var text = svg.append("text")
+            .attr("class", "text")
+            .attr("x", 100)
+            .attr("y", 100)
+            
+        var string ="Hello World. This text should rollout one word at a time";
+        
+        var addText = function (string, element) { 
+        
+            
+            var data = string.split('');
+            var words = ""; 
+
+            data.forEach(function (d, i) { 
+
+                var text = d3.select(element);
+
+                words = words + d;
+
+                text.transition().delay( function () { 
+                    return i * 20;   
+                }).text(words);
+
+
+            })
+            
+        }
+        
+        addText(string, '.text');
+        
+
+        
+       
+    
+    
+    </script>
+   
+</body>
+</html>

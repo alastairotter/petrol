@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet">
+
+
+
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="../lib/d3.v4.min.js"></script>
+    <script src="../lib/chroma.min.js"></script>
+    
+</head>
+
+<body>
+   <div class="title">South African Petrol Price: 2008 &mdash; 2016</div>
+    <div id="legend">
+        <div class="legend1box">&nbsp;</div>
+        <div class="legendtext">Pump Price</div>
+        <div class="legend2box">&nbsp;</div>
+        <div class="legendtext">Basic Fuel Price</div>
+        <div class="legend3box">&nbsp;</div>
+        <div class="legendtext">Price Adjusted for Inflation</div>
+        <div class="legendtext" style="margin-left: 40px;"><input type="checkbox" name="hideanno"> Hide annotations</div>
+        <div class="inflation">
+            <div class="detail">
+                <div class="detailtitle">
+                       Petrol Purchasing Power
+                </div>
+                <div class="detailtext">
+                    The dark green bars below are the price you pay for a litre of fuel. The lighter colour is the price of a litre of petrol before taxes and levies. The blue line is the relative cost of a litre of petrol based on today's buying power.
+                    
+                </div>
+            </div>
+        </div>
+        
+            
+            
+            
+        
+    </div>
+    
+    <div id="chart"></div>
+    
+    <div id="element2">
+    <div class="left">
+    <div class="secondtitle">How is the Petrol Price Calculated?</div>
+<!--
+    <div class="text">
+        The price you pay for a litre of petrol at the pump is a complex combination of factors, exchanges and levies. Some of these, like the various taxes and levies added to the basic fuel price, are relatively stable. Others, like the exchange rate and the price of oil, are far less stable and are the reason the petrol price can seem so volatile. 
+    </div>
+-->
+<!--
+      <div class="levyDescriptions">
+          <div class="description fuelTax">
+    <div class="descriptiontitle">Fuel Tax</div>
+ 	A fuel tax is levied on all petrol and diesel and is set by the Minister of Finance.
+    </div>
+    
+<div class="description retailMargin">
+    <div class="descriptiontitle">Retail Margin</div>
+ 	The retailers' profit margin is set by the Department of Energy and is calculated to include all the costs incurred by the retailers.
+</div>
+
+
+<div class="description roadAccidentFund">
+    <div class="descriptiontitle">Road Accident Fund</div>
+ 	The Road Accident Fund is set by the Minister of Finance. The fund is used to compensate third party victims of motor vehicle accidents.
+</div>
+
+
+<div class="description transportCosts">
+    <div class="descriptiontitle">Inland Transport Costs</div>
+ 	Refined petroleum products are transported by road, rail, pipeline and by a combination thereof from coastal refineries to inland depots.
+</div>
+
+
+<div class="description wholesaleMargin">
+    <div class="descriptiontitle">Wholesale Margin</div>
+ 	The margin is a fixed maximum monetary margin that is set industry wide.
+</div>
+
+
+<div class="description dsml">
+    <div class="descriptiontitle">Demand Side Management on 95 Unleaded Petrol (DSML)</div>
+ 	The DSML levy is added to the price of 95 unleaded petrol bought inland. The levy is intended to curtail the demand for 95 unleaded inland as most vehilces inland do not need to use this grade of petrol. 
+</div>
+
+
+<div class="description customs">
+    <div class="descriptiontitle">Customs and Excise</div>
+ 	A levy collected in terms of an agreement by the Southern African Customs Union.
+</div>
+      </div>
+-->
+       <div style="clear: both;"></div>
+        </div>
+        
+        <div id="chart2"></div>
+        <div style="clear: both;"></div>
+    </div>
+    
+   
+    
+    
+    <div id="chart3"></div>
+    
+    
+    <script>
+    
+        var margin = { top: 100, right: 100, bottom: 50, left: 100},
+            width = window.innerWidth - 50 - margin.left - margin.right, 
+            height = 400 - margin.top - margin.bottom;
+        
+        var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+                
+        var g = svg.append("g")
+                .attr("transform", "translate(" + margin.left + "," + (margin.top + 30) + ")")
+        
+        var x = d3.scaleTime().range([0,width-100]),
+            y = d3.scaleLinear().rangeRound([height,0])
+        
+        var parseDate = d3.timeParse("%Y-%m");
+        
+        var line = d3.line()
+            .x(function(d) { return x(d.dateMonth); })
+            .y(function(d) { return y(d.adjusted); });
+        
+        
+        
+        // CHART 2
+        
+        
+            
+        
+        
+        // CHART 2
+        
+        d3.csv("petrol_price.csv", function (data) { 
+            
+            data.forEach( function (d) { 
+                d.adjusted = +d.adjusted/100;
+                d.pumpPrice = +d.pumpPrice/100;
+                d.dateMonth = parseDate(d.dateMonth);
+                d.basicFuelPrice = +d.basicFuelPrice/100;
+            })
+            
+        
+            x.domain(d3.extent(data, function (d) { return d.dateMonth}))
+            y.domain([0, d3.max(data, function (d) { return d.adjusted + 2; })])
+            
+            
+            
+            x.ticks(d3.timeMonth.every(6));
+            
+            g.append("g")
+                .attr("class","axis axis--x")
+                .attr("transform", "translate(0," + height +")")
+                .call(d3.axisBottom(x))
+            
+            g.append("g")
+                  .attr("class", "axis axis--y")
+                  .call(d3.axisLeft(y).ticks(10)
+                       )
+                .append("text")
+                  .attr("transform", "rotate(-90)")
+                  .attr("y", 6)
+                  .attr("dy", "0.71em")
+                  .attr("text-anchor", "end")
+                  .text("Rand/litre");
+            
+            g.selectAll("bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class","bar")
+                .attr("x", function (d) { return x(d.dateMonth); })
+                .attr("y", function (d) { return y(d.pumpPrice); })
+                .attr("width", "6")
+                .attr("height", function (d) { return height - y(d.pumpPrice); })
+                .on("mouseover", function (d) { 
+                    console.log(d);
+                })
+//                .on("mouseover", function (d) { 
+//                
+//                    var label = g.append("text")
+//                        .text( function () { return d.pumpPrice; })
+//                        .attr("x", function () { return x(d.dateMonth); })
+//                        .attr("y", function () { return y(d.pumpPrice) - 10; })
+//                        .attr("class","label")
+//            
+//                })
+//                .on("mouseout", function () { 
+//                
+//                    d3.selectAll(".label")
+//                        .remove()
+//                    
+//                })
+                
+//                .attr("transform","translate(5,0)")
+            
+            g.selectAll("bar2")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class","bar2")
+                .attr("x", function (d) { return x(d.dateMonth); })
+                .attr("y", function (d) { return y(d.basicFuelPrice); })
+                .attr("width", "6")
+                .attr("height", function (d) { return height - y(d.basicFuelPrice); })
+//                .attr("transform","translate(6,0)")
+            
+            g.append("path")
+                .datum(data)
+                .attr("class", "line")
+                .attr("d", line);
+            
+            
+            
+            // ADD ANNOTATIONS
+            
+            
+            // Annotation 1 - First BC peak
+            
+            var thisX = x(parseDate("2008-07"));
+            var thisY = y((1621/100));
+            
+            g.append("foreignObject")
+                .attr("class", "a_note")
+                .attr("y", thisY - 110)
+                .attr("x", thisX + 60)
+                .html("<div class='notetext annotations'>Brent Crude oil peaks at $133.64 per barrel in August 2008</div>")
+            
+//            g.append("text")
+//                .attr("x", thisX+50)
+//                .attr("y", thisY - 30)
+//                .html("Brent Crude oil peaks $133.64 per barrel in August 2008")
+//                .attr("class", "annotation")
+            
+            g.append("line")
+                .attr("x1", thisX + 5)
+                .attr("x2", thisX + 55)
+                .attr("y1", thisY - 20)
+                .attr("y2", thisY - 70)
+                .attr("class","annotateline annotations")
+                .attr("transform","translate(0,-5)")
+            
+            // Annotation 2 - First BC trough
+            
+            var thisX = x(parseDate("2009-01"));
+            var thisY = y((909/100));
+            
+            g.append("foreignObject")
+                .attr("class", "a_note")
+                .attr("y", thisY - 105)
+                .attr("x", thisX + 40)
+                .html("<div class='notetext annotations'>Five months later Brent Crude drops to $39.99 a barrel</div>")
+            
+
+            
+            g.append("line")
+                .attr("x1", thisX + 3)
+                .attr("x2", thisX +35)
+                .attr("y1", thisY - 5)
+                .attr("y2", thisY - 70)
+                .attr("class","annotateline annotations")
+                .attr("transform","translate(0,-5)")
+            
+            
+            // Annotation 3 - Peak 2008 price
+            
+            var thisX = x(parseDate("2008-07"));
+            var thisY = y((1070/100));
+            
+            g.append("foreignObject")
+                .attr("x", thisX - 12) 
+                .attr("y", thisY - 30)
+                .html("<div class='label annotations'>Jul '08<br/>R10.70</div>")
+            
+            // Annotation 4 - Trough 2009 price
+            
+            var thisX = x(parseDate("2009-01"));
+            var thisY = y((601/100));
+            
+            g.append("foreignObject")
+                .attr("x", thisX + 10) 
+                .attr("y", thisY - 45)
+                .html("<div class='label annotations'>Jan '09<br/>R6.01</div>")
+            
+            g.append("line")
+                .attr("x1", thisX + 3)
+                .attr("x2", thisX +13)
+                .attr("y1", thisY)
+                .attr("y2", thisY - 20)
+                .attr("class","annotateline annotations")
+                .attr("transform","translate(0,-5)")
+               
+            
+            // Annotation 5 - Adjusted peak 2008
+            
+            var thisX = x(parseDate("2008-07"));
+            var thisY = y((1621/100));
+            
+            g.append("foreignObject")
+                .attr("x", thisX -20) 
+                .attr("y", thisY - 20)
+                .html("<div class='labelannotate annotations'>R16.21</div>")
+    
+
+            // Annotation 6 - Peak May 2012 : 1546
+            
+            var thisX = x(parseDate("2012-05"));
+            var thisY = y((1546/100));
+            
+            g.append("foreignObject")
+                .attr("x", thisX -20) 
+                .attr("y", thisY - 35)
+                .html("<div class='labelannotate annotations'>May '12<br/>R15.46</div>")
+            
+            
+            // Annotation 7 - Current price : 1235
+            
+            var thisX = x(parseDate("2016-08"));
+            var thisY = y((1235/100));
+            
+            g.append("foreignObject")
+                .attr("x", thisX - 20) 
+                .attr("y", thisY - 65)
+                .html("<div class='label annotations'>Aug '16<br/>R12.35</div>")
+            
+            
+            // Annotation 8 - Basic Fuel Price & levies
+            
+            var thisX = x(parseDate("2016-08"));
+            var thisY = y((1235/100));
+            var thisY2 = y((514/100));
+            
+            g.append("line")
+                .attr("x1", thisX + 25)
+                .attr("x2", thisX + 25)
+                .attr("y1", thisY)
+                .attr("y2", thisY2 - 3)
+                .attr("class","bfpguides annotations")
+            
+            g.append("line")
+                .attr("x1", thisX + 10)
+                .attr("x2", thisX + 25)
+                .attr("y1", thisY)
+                .attr("y2", thisY)
+                .attr("class","bfpguides annotations")
+            
+            g.append("line")
+                .attr("x1", thisX + 10)
+                .attr("x2", thisX + 25)
+                .attr("y1", thisY2 - 3)
+                .attr("y2", thisY2 - 3)
+                .attr("class","bfpguides annotations")
+            
+            g.append("foreignObject")
+                .attr("x", thisX + 35)
+                .attr("y", thisY + 35)
+                .html("<div class='bfp annotations'>Fuel taxes & levies<br /><span class='endnotetext'>R7.21</span></div>")
+            
+            
+            
+            // Second BFP bracket
+            
+            var thisX = x(parseDate("2016-08"));
+            var thisY = y((514/100));
+            
+            
+            g.append("line")
+                .attr("x1", thisX + 25)
+                .attr("x2", thisX + 25)
+                .attr("y1", thisY + 3)
+                .attr("y2", height)
+                .attr("class","bfpguides annotations")
+            
+            g.append("line")
+                .attr("x1", thisX + 10)
+                .attr("x2", thisX + 25)
+                .attr("y1", thisY +3)
+                .attr("y2", thisY +3)
+                .attr("class","bfpguides annotations")
+            
+            g.append("line")
+                .attr("x1", thisX + 10)
+                .attr("x2", thisX + 25)
+                .attr("y1", height)
+                .attr("y2", height)
+                .attr("class","bfpguides annotations")
+            
+                
+            // Add BFP notes
+            
+            g.append("foreignObject")
+                .attr("x", thisX + 35)
+                .attr("y", thisY + 25)
+                .html("<div class='bfp annotations'>Basic fuel price<br /><span class='endnotetext'>R5.14</span></div>")
+            
+            
+            
+            
+            // Hide annotations
+            d3.select("[id=hideanno]")
+                .remove()
+
+                                          
+        });
+        
+        
+        d3.select("[name=hideanno]")
+                .on("change", function () { 
+                    var checked = d3.select("[name=hideanno]").property('checked');
+                    if(checked) { 
+                        d3.selectAll(".annotations")
+                            .style("visibility", "hidden")
+                        
+                       
+                    }
+                    else { 
+                        d3.selectAll(".annotations")
+                            .style("visibility","visible")
+                        
+                        
+                    }
+                })
+        
+        d3.select("#legend")
+            .style("top", (margin.top/2) + "px")
+            .style("left", margin.left + "px")
+        
+
+        
+       
+        
+        
+    
+    </script>
+    <script src="chart2.js"></script>
+    <script src="chart3.js"></script>
+<!--
+    
+    "#44a092",
+"#4be79b",
+"#4b6f67",
+"#61f1ce",
+"#3e785d",
+"#b6e6d4",
+"#2e9968",
+"#66d9d2",
+"#85ad9e",
+"#63c99d"
+-->
+</body>
+</html>

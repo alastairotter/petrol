@@ -1,0 +1,135 @@
+var width2 = 600,
+    height2 = 450;
+
+var colorrange = ["#2e9968","#44a092",
+//"#4be79b",
+"#4b6f67",
+"#61f1ce",
+"#3e785d",
+"#b6e6d4",
+
+//"#66d9d2",
+"#85ad9e",
+"#63c99d"];
+
+//var colorrange = chroma.scale(['#3E785D','#85AD9E']).colors(14);
+var colorrange = ["#649480", "#85ad9e", "#7aa494", "#538871", "#488067", "#74a08f", "#3e785d", "#598c76", "#4e846c", "#5e907b", "#699885", "#437c62", "#7fa899", "#6f9c8a"];
+
+var colorrange = ["#3E785D", "#85AD9E","#3E785D", "#85AD9E","#3E785D", "#85AD9E","#3E785D", "#85AD9E","#3E785D", "#85AD9E","#3E785D", "#85AD9E"];
+
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
+//colorrange = shuffleArray(colorrange);
+//console.log(colorrange);
+
+
+var svg2 = d3.select("#chart2")
+    .append("svg")
+    .attr("width", width2)
+    .attr("height", height2)
+
+var levyg = svg2.append("g")
+    .append("g")
+//    .attr("transform", "translate(10,50)")
+
+var y2 = d3.scaleLinear().rangeRound([0,height2-25])
+
+
+
+
+
+
+d3.csv("petrol_levies.csv", function (data2) { 
+    console.log(data2);
+    
+    var levyTotal = data2[14].valueRounded; 
+    
+    console.log(levyTotal);
+    
+    y2.domain([0,levyTotal]);
+    
+    var dataTemp = data2.filter( function (d) { return (d.levy !== "pumpPrice") && (d.value > 0); })
+   
+    
+    console.log(dataTemp);
+    
+    var addUp = 0; 
+    var labely = 200; 
+    
+    dataTemp.forEach( function (d, i) { 
+        d.value = +d.value;
+        d.valueRounded = +d.valueRounded;
+         
+        
+        levyg.append("rect")
+//        .attr("rx", 10)
+//        .attr("ry", 10)
+        .attr("x", 20)
+        .attr("y",addUp)
+       
+        .attr("width", 150)
+        .attr("height", y2(d.valueRounded))
+        .style("fill", function ()  { 
+            return colorrange[i];
+        })
+        .on("mouseover", function () { 
+            d3.select(this)
+                .style("stroke","#fff")
+                .style("stroke-width", 1)
+        
+        })
+        
+        .on("mouseout", function () { 
+            d3.select(this)
+                .style("stroke","#fff")
+                .style("stroke-width", 0)
+        
+        })
+        
+        levyg.append("text")
+//            .attr("transform", "rotate(45)")
+            .text(d.label + " ( " + d.value + " cents )")
+            .attr("y", addUp + (y2(d.valueRounded) / 2) + 4)
+            .attr("x", labely + 10)
+            .attr("class", "label")
+            .style("text-anchor","start")
+//            .style("fill", "#85AD9E")
+        
+//        levyg.append("text")
+//            .attr("transform", "rotate(90)")
+//            .text(d.levy)
+//            .attr("x", 500)
+//            .attr("y", labely)
+//            .attr("class", "label")
+//            .style("text-anchor","middle")
+//        
+//        
+        levyg.append("line")
+            .attr("y1", addUp + (y2(d.valueRounded) / 2))
+            .attr("y2", addUp + (y2(d.valueRounded) / 2))
+            .attr("x1", 180)
+            .attr("x2", labely)
+            .attr("class","annotateline")
+        
+
+        
+//        labely == 150 ? labely = 250 : labely = 150;
+//        if(i >3) labely += 15;
+        
+         addUp += (y2(d.valueRounded) + 2);
+        
+        
+    })
+    
+    
+    
+})
+    

@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How the South African petrol price is calculated via @alastairotter</title>
+    <link rel="stylesheet" href="lib/font-awesome-4.7.0/css/font-awesome.css">
+    <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="">
+    <script src="lib/d3.v4.min.js"></script>
+    <script src="lib/jquery.min.js"></script>
+
+
+    <style>
+        body {
+            font-family: "Roboto Condensed", Arial, "Helvetica Neue", Helvetica, sans-serif;
+            background: #282828;
+            margin:0;
+        }
+
+        a {
+          color: #fff;
+        }
+
+        .boldtext {
+            font-size:300%;
+            font-weight: 700;
+        }
+
+        .gaugeLabel {
+            fill: #fff;
+            stroke: none;
+            font-size: 150%;
+            font-weight: 700;
+
+        }
+
+        .pointer {
+            fill: #000;
+
+            stroke: #fff;
+            stroke-width: 4;
+        }
+
+        .text {
+            color: #e8e8e8;
+            font-size: 100%;
+            font-weight: 300;
+            line-height: 120%;
+
+        }
+
+        .intro {
+            position: absolute;
+            text-align: center;
+            width: 96%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        .intro2, .intro3, .intro4, .intro5, .intro6 {
+            display: none;
+        }
+
+        .highlight {
+            font-family: "Orbitron", Arial, "Helvetica Neue", Helvetica, sans-serif;
+        }
+
+        .continue {
+          position: absolute;
+            top:93%;
+            text-transform: uppercase;
+            font-size: 90%;
+            color: gray;
+
+            display: none;
+        }
+
+        .continue1, .continue2 {
+
+
+
+        }
+
+        .continue:hover {
+            color: #eee;
+            cursor: pointer; cursor: hand;
+        }
+
+
+        .section2 {
+            width: 200px;
+            position: absolute;
+            text-align: center;
+            width: 96%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: -40px;
+        }
+
+        .section1 {
+            display: none;
+
+        }
+
+        .label1, .label2 {
+            display: none;
+            position: absolute;
+            color: #eee;
+            font-size: 90%;
+
+
+        }
+
+        .llabel1, .llabel2, .llabel3 ,.llabel4{
+            display: none;
+            position: absolute;
+            color: #eee;
+            font-size: 90%;
+
+
+        }
+
+        .label2 {
+          display: none;
+        }
+
+        .label{
+            fill: #eee;
+            stroke: none;
+            font-size: 90%;
+            text-anchor: end;
+        }
+
+        .fa {
+          font-size: 140%;
+          color: #fff;
+        }
+
+        .mainTitle {
+          position: absolute;
+          z-index: 1000;
+          top: 20px;
+          width: 100%;
+          text-align: center;
+          color: #e8e8e8;
+          font-weight: 700;
+          font-size: 200%;
+        }
+
+
+
+      /* phone screens */
+      @media screen and (max-width: 600px) {
+    body {
+
+    }
+    .mainTitle {
+      font-size: 150%;
+      top: 10px;
+    }
+
+    .text {
+      font-size: 90%;
+    }
+}
+
+
+
+
+    </style>
+</head>
+
+<body>
+
+
+<div class="intro intro1 text">If you fill up your car today the petrol will cost you R13,79 per litre</div>
+<!--
+<div class="intro intro2 text">A month ago the same petrol would have cost you R12,85 per litre</div>
+  <div class="intro intro3 text">And a year ago, in January 2016, it would have cost you R12,37 per litre</div>
+<div class="intro intro4 text">Occasionally the price of petrol will decrease but, for cash-strapped consumers, it feels like petrol only ever goes up.
+    </div>
+    <div class="intro intro5 text">The price of petrol also seems very volatile. One month the price is decreased and the next there there is a massive increase in the price.</div>
+
+    <div class="intro intro6 text">The reason for these large changes in the price of petrol from one month to another is because of the many volatile factors used to calculate the price.
+    <div class="continue">Click here to continue &nbsp; <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
+</div></div>
+-->
+  <div class='continue continue1'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+  <div class='continue continue2'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+  <div class='continue continue3'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+  <div class='continue continue4'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+
+  <div class='continue continue5'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+  <div class='continue continue6'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+  <div class='continue continue7'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+  <div class='continue continue8'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+  <div class='continue continue9'>Click to continue &nbsp; <i class='fa fa-chevron-circle-right' aria-hidden='true'></i></div>
+
+
+
+
+<!-- <div class="section2 section1 text">There are a number of factors used to caluclate the price you pay for petrol at the pump. These include the exchange rate and oil price (volatile) and various taxes and margins (more stable). <br /><br />
+  This is the price you pay at the petrol pump for 95 unleaded fuel (inland provinces) R13,79/l</div> -->
+
+  <div class="section2 section1 text"></div>
+
+    <div class="label1">R13,79</div>
+      <div class="label2">R13,79</div>
+
+    <div class="llabel1">R3,29</div>
+    <div class="llabel2">R1,63</div>
+    <div class="llabel3">R0,76</div>
+    <div class="llabel4">R2,11</div>
+
+    <script>
+
+
+
+
+        var getAttrs = function (element) {
+
+            var e = d3.select(element).node().getBBox();
+
+            return e;
+
+
+        }
+
+        var intro = "If you fill up your car today the petrol will cost you R13,79 per litre.";
+
+
+        var intro2 = "A month ago the same petrol would have cost you R12,85 per litre. And a year ago, in January 2016, it would have cost you R12,37 per litre";
+
+        var intro3 = "Occasionally the price of petrol will decrease but, for cash-strapped consumers, it feels like petrol only ever goes up.";
+
+        var intro4 = "The price of petrol also seems very volatile. One month the price is decreased and the next there there is a massive increase in the price";
+
+        var intro5 = "That's 49c/l more than you paid last month (R13,30) and R1.05 more than you would have paid a year ago (R12,74).<br /><br />So how is the petrol price calculated? ";
+
+
+        // SECTION COPY
+
+        var section2 = "The price of petrol, which is re-calculated every month, is made up of two core elements: the basic fuel price (BFP) and a collection of levies, taxes and costs associated with transporting, storing and distributing petrol.";
+
+        var section3 = "The Basic Fuel Price (BFP) is the cost of importing oil. This cost is based on the international oil price and includes the cost of shipping and storage. The basic fuel price is the most volatile portion of the petrol equation because it is a combination of the R/$ exchange rate and the price of a barrel of oil, which means that sudden exchange rate changes are reflected almost immediately in the price of petrol.";
+
+        var section4 = "On top of the BFP there are R3,29 worth of taxes and levies applied. There is a R3,15 tax on each litre, a 4c per litre customs and excise levy and a 0.3c/l petroleum products levy. The R3,15 tax is set by the minister of finance and remains relatively stable throughout the year. There is also a 10c/l levy applied to 95 octane petrol in inland provinces to encourage motorists to use the easer-to-produce 93 octane petrol.";
+
+        var section5 = "Then there is a R1,63 Road Accident Fund (RAF) levy. The RAF levy is set by the minister of finance and the proceeds of the RAF are used to compensate third parties involved in road accidents.";
+
+
+        var section6 = "Another 76c is added to the price of petrol to cover the costs of domestic transportation of petrol around the country by rail, road and pipeline (41c) as well as secondary storage (17,9c) and distribution (17.3c). These additions are designed to cover costs incurred at the various sub-depots around the country.";
+
+        var section8 = "The numbers above have been rounded for illustrative purposes. Data for this infographic was sourced from the <a href='http://www.energy.gov.za/'>Department of Energy</a> and the <a href='https://www.aa.co.za/'>AA</a><br /><br />If you found this interesting or useful please share it. If you have suggestions or comments you can find me on <a href='http://twitter.com/alastairotter'>Twitter</a> or take a look at some of my <a href='http://mediahack.co.za/alastair/'>other projects</a>.";
+
+        var section7 = "Finally there are the wholesale and retail margins (R2,11). The wholesale profit margin is 35,6c/l and this covers the coastal storage depot costs. The retail margin of R1,76 is fixed by the Department of Energy and goes to the service station owner to cover their business costs. ";
+
+        var section9 = "The final levy added is the demand side management levy. This adds 10c to the price of 95 octane petrol in inland provinces. ";
+
+        function degToRad (degree) {
+            return degree * (Math.PI/180);
+        }
+
+        var outerRadius = 150;
+
+        var width = window.innerWidth,
+            height = window.innerHeight;
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width * 0.98)
+            .attr("height", height * 0.99)
+
+        var gauge = svg.append("g")
+
+        var arc = d3.arc()
+            .innerRadius( function (d) {
+                return outerRadius - d.size;
+            })
+            .outerRadius( outerRadius )
+            .startAngle( function (d) {
+
+                return degToRad(d.startangle);
+            })
+
+            .endAngle( function (d) {
+                return degToRad(d.endangle);
+            })
+
+
+var green = "#72ff47";
+var red = "#ff2d2d";
+
+        var points = [
+            {   startangle: 270, endangle: 272, color: red, size: 25 },
+//            {   startangle: 270, endangle: 272, color: "crimson", size: 25 },
+            {   startangle: 280, endangle: 282, color: red, size: 10 },
+            {   startangle: 290, endangle: 292, color: red, size: 10 },
+            {   startangle: 300, endangle: 302, color: green, size: 10 },
+            {   startangle: 310, endangle: 312, color: green, size: 10 },
+            {   startangle: 320, endangle: 322, color: green, size: 10 },
+            {   startangle: 330, endangle: 332, color: green, size: 10 },
+            {   startangle: 340, endangle: 342, color: green, size: 10 },
+            {   startangle: 350, endangle: 352, color: green, size: 10 },
+            {   startangle: 0, endangle: 2, color: green, size: 25, class: "centerline"},
+            {   startangle: 8, endangle: 10, color: green, size: 10 },
+            {   startangle: 18, endangle: 20, color: green, size: 10 },
+            {   startangle: 28, endangle: 30, color: green, size: 10 },
+            {   startangle: 38, endangle: 40, color: green, size: 10 },
+            {   startangle: 48, endangle: 50, color: green, size: 10 },
+            {   startangle: 58, endangle: 60, color: green, size: 10 },
+            {   startangle: 68, endangle: 70, color: green, size: 10 },
+            {   startangle: 78, endangle: 80, color: green, size: 10 },
+            {   startangle: 88, endangle: 90, color: green, size: 25 },
+//            {   startangle: 45, endangle: 50, color: "gray", size: 150 },
+
+
+
+
+        ];
+
+        gauge.append("svg:image")
+           .attr('x', width/2 - 15)
+           .attr('y', height/2 - 100)
+           .attr('width', 40)
+           .attr('height', 40)
+           .attr("xlink:href","fuelpump.png")
+            .style("opacity", 1)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1)
+
+        gauge.selectAll(".lines")
+            .data(points)
+            .enter()
+            .append("path")
+            .style("display", "none")
+            .attr("class", function (d) {
+                return d.class;
+            })
+            .attr("fill", function (d) {
+                return d.color;
+            })
+            .attr("d", arc)
+            .attr("transform", "translate(" + width/2 + "," + height/2 + ")")
+            .transition()
+            .delay(function (d, i) {
+                return i * 100;
+            })
+            .style("display", "block")
+
+
+//       addText(intro, ".intro");
+
+
+       gauge.append("text")
+            .text("E")
+            .attr("x", width/2 - 160)
+            .attr("y", height/2)
+            .attr("class", "gaugeLabel")
+            .style("text-anchor", "end")
+
+       gauge.append("text")
+            .text("F")
+            .attr("x", width/2 + 160)
+            .attr("y", height/2)
+            .attr("class", "gaugeLabel")
+            .style("text-anchor", "start")
+            .style("opacity", 1)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1)
+
+
+
+        // POSITION INTRO
+        var intro = $(".intro").width();
+        var cont = $(".continue").width();
+
+//        var intro2 = $(".intro2").width();
+//        var intro3 = $(".intro3").width();
+//        var intro4 = $(".intro4").width();
+//        var intro5 = $(".intro5").width();
+//        var intro6 = $(".intro6").width();
+//
+        d3.select(".intro")
+            .style("left", width/2 - intro/2 + "px")
+            .style("top", height/2 + 30 + "px")
+
+        d3.select(".continue")
+            .style("left", width/2 - cont/2 + "px")
+            .style("top", height/2 + 20 + "px")
+
+//        d3.select(".intro2")
+//            .style("left", width/2 - intro/2 + "px")
+//            .style("top", height/2 + 30 + "px")
+//
+//         d3.select(".intro3")
+//            .style("left", width/2 - intro/2 + "px")
+//            .style("top", height/2 + 30 + "px")
+//
+//         d3.select(".intro4")
+//            .style("left", width/2 - intro/2 + "px")
+//            .style("top", height/2 + 30 + "px")
+//
+//         d3.select(".intro5")
+//            .style("left", width/2 - intro/2 + "px")
+//            .style("top", height/2 + 30 + "px")
+//
+//         d3.select(".intro6")
+//            .style("left", width/2 - intro/2 + "px")
+//            .style("top", height/2 + 30 + "px")
+
+
+
+        var chart = svg.append("g")
+        var centerline;
+        var levy1, levy2, levy3, levy4;
+        var llabel1, llabel2, llabel3, llabel4;
+
+        llabel1 = d3.select(".llabel1")
+          .style("left", width/2 + 55 + "px");
+
+          llabel2 = d3.select(".llabel2")
+            .style("left", width/2 + 55 + "px")
+
+            llabel3 = d3.select(".llabel3")
+              .style("left", width/2 + 55 + "px")
+
+              llabel4 = d3.select(".llabel4")
+                .style("left", width/2 + 55 + "px")
+
+        setTimeout( function () {
+
+          // levy5 = chart.append("rect")
+          //   .attr("x", width/2 - 40)
+          //   .attr("y", height/2 - 197)
+          //   .attr("width", 80)
+          //   .attr("height", 197)
+          //   .style("fill", "#5a8257")
+          //   .style("opacity",0)
+
+          levy4 = chart.append("rect")
+            .attr("x", width/2 - 40)
+            .attr("y", height/2 - 197)
+            .attr("width", 80)
+            .attr("height", 197)
+            .style("fill", "#61a23e")
+            .style("opacity",0)
+
+          levy3 = chart.append("rect")
+            .attr("x", width/2 - 40)
+            .attr("y", height/2 - 166)
+            .attr("width", 80)
+            .attr("height", 166)
+            .style("fill", "#b3d7a2")
+            .style("opacity",0)
+
+
+          levy2 = chart.append("rect")
+            .attr("x", width/2 - 40)
+            .attr("y", height/2 - 155)
+            .attr("width", 80)
+            .attr("height", 155)
+            .style("fill", "#65dc94")
+            .style("opacity",0)
+
+          levy1 = chart.append("rect")
+            .attr("x", width/2 - 40)
+            .attr("y", height/2 - 132)
+            .attr("width", 80)
+            .attr("height", 132)
+            .style("fill", "#72ff47")
+            .style("opacity",0)
+
+          llabel1.style("top", height/2 - 115 + "px")
+
+          llabel2.style("top", height/2 - 150 + "px")
+
+          llabel3.style("top", height/2 - 170 + "px")
+
+          llabel4.style("top", height/2 - 190 + "px")
+
+            centerline = chart.append("rect")
+                .attr("x", width/2)
+                .attr("y", height/2 - 150)
+                .attr("width", 5)
+                .attr("height", 25)
+                .style("fill", "#72ff47")
+                .attr("class", "centerline")
+
+
+
+
+
+        },4000);
+
+
+
+
+        var introSwitch = function (introHtml, callback) {
+
+            d3.select(".intro")
+                .style("opacity", 1)
+                .transition()
+                .delay(3000)
+                .duration(250)
+                .style("opacity", 0)
+                .on("end", function () {
+                    d3.select(".intro")
+                        .style("opacity", 0)
+                        .html(introHtml)
+                        .transition()
+                        .duration(250)
+                        .style("opacity", 1)
+                        .on("end", callback)
+
+
+
+
+                })
+
+
+
+
+
+        }
+
+
+
+        // TESTING
+
+        var showContinue = function () {
+
+
+            var introHeight = d3.select(".intro")
+                .node().getBoundingClientRect();
+
+            introHeight = introHeight.bottom;
+
+            console.log(introHeight)
+
+
+             d3.select(".continue1")
+                .style("top", "92%")
+                .style("opacity", 0)
+                .style("display", "block")
+                .transition()
+                .delay(1000)
+                .duration(1000)
+                .style("opacity", 1)
+        }
+
+         setTimeout(function () {
+            introSwitch(intro5, showContinue); // ADDS SECOND INTRO TEXT
+
+
+
+
+        }, 1000)
+
+
+
+
+
+
+
+
+        // MANUAL NAVIGATION
+        // STAGE1
+
+        d3.selectAll(".continue1")
+            .on("click", function () {
+
+                d3.select(".continue1").remove();
+
+                d3.select(".intro").remove();
+
+                gauge.style("opacity", 1)
+                    .transition()
+                    .duration(1000)
+                    .style("opacity", 0)
+
+                d3.select(".intro6")
+                    .transition()
+                    .duration(2000)
+                    .style("opacity", 0)
+                    .remove()
+
+                centerline.transition()
+                    .delay(0)
+                    .duration(2500)
+                    .attr("x", width/2 - 40)
+                    .attr("height", 197)
+                    .attr("y", height/2 - 197)
+                    .attr("width", 80)
+
+
+
+                var section1width = $(".section1").width()
+
+                var positionCont = function () {
+                    var introHeight = d3.select(".section2")
+                            .node().getBoundingClientRect();
+
+                        introHeight = introHeight.bottom;
+
+
+                        d3.selectAll(".continue2")
+                            .style("left", width/2 - cont/2 + "px")
+                            .style("top", "92%")
+                            .style("opacity", 0)
+                            .style("display", "block")
+                            .transition()
+                            .delay(1000)
+                            .duration(1000)
+                            .style("opacity", 1)
+                }
+
+                var section1 = d3.select(".section1")
+                    .style("opacity", 0)
+                    .style("display", "block")
+                    .transition()
+                    .delay(1000)
+                    .duration(1000)
+                    .style("opacity", 1)
+                    .style("left", width/2 - section1width/2 + "px")
+                    .style("top", height/2 + 70 + "px")
+                    .on("end", positionCont)
+
+
+
+                var clinevalues = d3.select(".centerline").node().getBoundingClientRect()
+
+
+                var label1 = d3.select(".label1")
+                    .style("opacity", 0)
+                    .style("display", "block")
+                    .transition()
+                    .delay(1000)
+                    .duration(1000)
+                    .style("opacity", 0)
+                    .style("left", clinevalues.right + 50 + "px")
+                    .style("top", clinevalues.top + "px")
+
+
+/////////////////
+setTimeout( function () {
+console.log("STAGE 2");
+
+
+    d3.select(".section2")
+        .transition()
+        .duration(250)
+        .style("opacity", 0)
+        .on("end", function () {
+            d3.select(".section2")
+                .html(section2)
+                .transition()
+                .duration(250)
+                .style("opacity", 1)
+
+            var clinex = centerline.attr("x");
+            var cliney = centerline.attr("y");
+            var clineh = centerline.attr("height");
+            var clinehy = +clineh + +cliney;
+            var clinew = centerline.attr("width");
+
+            console.log(cliney);
+            console.log(clineh);
+            console.log(clinehy);
+
+
+
+
+          chart.append("rect")
+                .attr("x", clinex)
+                .attr("y", clinehy)
+                .attr("width", clinew)
+                .attr("class", "bar2")
+                .attr("height", 0)
+                .style("fill", red)
+                .transition()
+                .duration(500)
+                .attr("y", +clinehy - 85)
+                .attr("height", 85)
+                .on("end", function () {
+                    var e = getAttrs(".bar2");
+                    console.log(e);
+
+                    chart.append("text")
+                        .text("Basic Fuel Price")
+                        .classed("label", true)
+                        .attr("class", "label")
+                        .classed("barlabel2",true)
+                        .attr("x", e.x - 20)
+                        .attr("y", e.y + e.height/2)
+
+
+                    chart.append("text")
+                        .text("Levies, taxes & costs")
+                        .attr("class", "label")
+                        .classed("barlabel1", true)
+                        .attr("x", e.x - 20)
+                        .attr("y", e.y - (120 - e.height) - 30)
+
+                    d3.select(".continue2")
+                        .style("display", "none")
+
+
+
+                        // ADD CONTINUE 3
+
+                    var introHeight = d3.select(".section2")
+            .node().getBoundingClientRect();
+
+        introHeight = introHeight.bottom;
+
+
+        d3.selectAll(".continue3")
+            .style("left", width/2 - cont/2 + "px")
+            .style("top", "93%")
+            .style("opacity", 0)
+            .style("display", "block")
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .style("opacity", 1)
+
+
+
+
+
+
+                })
+
+
+
+            })
+          }, 2000);
+
+/////////////////
+
+
+
+            })
+
+
+
+            // STAGE 2
+
+            d3.selectAll(".continue2")
+                .on("click", function () {
+
+                console.log("STAGE 2");
+
+
+                    d3.select(".section2")
+                        .transition()
+                        .duration(250)
+                        .style("opacity", 0)
+                        .on("end", function () {
+                            d3.select(".section2")
+                                .html(section2)
+                                .transition()
+                                .duration(250)
+                                .style("opacity", 1)
+
+                            var clinex = centerline.attr("x");
+                            var cliney = centerline.attr("y");
+                            var clineh = centerline.attr("height");
+                            var clinehy = +clineh + +cliney;
+                            var clinew = centerline.attr("width");
+
+                            console.log(cliney);
+                            console.log(clineh);
+                            console.log(clinehy);
+
+
+
+
+                          chart.append("rect")
+                                .attr("x", clinex)
+                                .attr("y", clinehy)
+                                .attr("width", clinew)
+                                .attr("class", "bar2")
+                                .attr("height", 0)
+                                .style("fill", red)
+                                .transition()
+                                .duration(500)
+                                .attr("y", +clinehy - 85)
+                                .attr("height", 85)
+                                .on("end", function () {
+                                    var e = getAttrs(".bar2");
+                                    console.log(e);
+
+                                    chart.append("text")
+                                        .text("Basic Fuel Price")
+                                        .classed("label", true)
+                                        .attr("class", "label")
+                                        .classed("barlabel2",true)
+                                        .attr("x", e.x - 20)
+                                        .attr("y", e.y + e.height/2)
+
+
+                                    chart.append("text")
+                                        .text("Levies, taxes & costs")
+                                        .attr("class", "label")
+                                        .classed("barlabel1", true)
+                                        .attr("x", e.x - 20)
+                                        .attr("y", e.y - (120 - e.height) - 30)
+
+                                    d3.select(".continue2")
+                                        .style("display", "none")
+
+
+
+                                        // ADD CONTINUE 3
+
+                                    var introHeight = d3.select(".section2")
+                            .node().getBoundingClientRect();
+
+                        introHeight = introHeight.bottom;
+
+
+                        d3.selectAll(".continue3")
+                            .style("left", width/2 - cont/2 + "px")
+                            .style("top", introHeight + "px")
+                            .style("opacity", 0)
+                            .style("display", "block")
+                            .transition()
+                            .delay(100)
+                            .duration(100)
+                            .style("opacity", 1)
+
+
+
+
+
+
+                                })
+
+
+
+                            })
+
+
+
+
+
+
+
+                })
+
+
+
+
+            // STAGE 3
+
+            d3.select(".continue3")
+                .on("click", function () {
+                    console.log("continue3");
+
+                    var clinex = centerline.attr("x");
+                    var cliney = centerline.attr("y");
+                    var clineh = centerline.attr("height");
+                    var clinehy = +clineh + +cliney;
+                    var clinew = centerline.attr("width");
+                    var e = getAttrs(".bar2");
+
+                    // d3.select(".bar2").transition()
+                    //   .duration(1000)
+                    //   .attr("x", clinex - 90)
+
+                    centerline.transition().duration(1000).style("opacity", 0)
+
+                    d3.select(".section2")
+                      .transition()
+                      .duration(100)
+                      .style("opacity", 0)
+                        .on("end", function () {
+                            d3.select(".section2")
+                              .html(section3)
+                              .transition()
+                              .duration(100)
+                              .style("opacity", 1)
+                        })
+
+                      d3.select(".barlabel1")
+                        .style("opacity",0)
+
+                      d3.select(".label1")
+                        .transition()
+                        .duration(1000)
+                        .style("top", e.y + 35 + "px")
+                        .transition()
+                        .duration(100)
+                        .style("opacity", 1)
+                        .text("R5,97")
+
+
+                    centerline
+                    .attr("y", +clinehy - 85)
+                    .attr("height", 85)
+                    .transition().duration(1000).style("opacity", 1)
+
+
+                    d3.select(".continue3")
+                        .style("display", "none")
+
+
+
+                        // ADD CONTINUE 3
+
+                    var introHeight = d3.select(".section2")
+            .node().getBoundingClientRect();
+
+        introHeight = introHeight.bottom;
+
+
+        d3.selectAll(".continue4")
+            .style("left", width/2 - cont/2 + "px")
+            .style("top", "93%")
+            .style("opacity", 0)
+            .style("display", "block")
+            .transition()
+            .delay(100)
+            .duration(100)
+            .style("opacity", 1)
+
+
+                    // d3.select(".label2")
+                    //   .transition()
+                    //   .duration(1000)
+                    //   .attr("x", e.x - 110)
+
+                    // centerline.transition()
+                    //     .duration(1000)
+                    //     .attr("x", function () {
+                    //       return this.attr("x") + 50;
+                    //     })
+
+                })
+
+                // STAGE 3
+
+                function addLevies(barh, section) {
+                  var clinex = centerline.attr("x");
+                  var cliney = centerline.attr("y");
+                  var clineh = centerline.attr("height");
+                  var clinehy = +clineh + +cliney;
+                  var clinew = centerline.attr("width");
+                  var e = getAttrs(".bar2");
+
+                // levy1.transition()
+                //   .duration(1000)
+                //   .attr("y", +clinehy - barh)
+                //   .attr("height", barh)
+                //   .attr("x", width/2 - 40)
+                //   .attr("width", 80)
+                //   .transition()
+                //   .duration(1000)
+                //   .style("opacity", 1)
+                //
+                //
+                //   levy2.transition()
+                //     .duration(1000)
+                //     .attr("y", +clinehy - barh)
+                //     .attr("height", barh)
+                //     .attr("x", width/2 - 40)
+                //     .attr("width", 80)
+                //
+                //     levy3.transition()
+                //       .duration(1000)
+                //       .attr("y", +clinehy - barh)
+                //       .attr("height", barh)
+                //       .attr("x", width/2 - 40)
+                //       .attr("width", 80)
+
+                d3.select(".section2")
+                  .transition()
+                  .duration(300)
+                  .style("opacity", 0)
+                    .on("end", function () {
+                        d3.select(".section2")
+                        .html(section)
+                        .transition()
+                        .duration(500)
+                        .style("opacity",1)
+
+
+                    })
+                    var clinevalues = d3.select(".centerline").node().getBoundingClientRect()
+
+
+                    // d3.select(".label2")
+                    // .style("left", clinevalues.right + 50 + "px")
+                    // .style("top", clinevalues.top + "px")
+                    //   .transition()
+                    //   .duration(1000)
+                    //
+                    //   .style("display", "block")
+                      // .transition()
+                      // .duration(1000)
+                      // .text("R5,97")
+
+
+                  }
+
+                  function continuechange (sectionold, sectionnew)  {
+                    console.log(sectionnew);
+                    d3.select(sectionold)
+                            .style("display", "none")
+
+
+                            var introHeight = d3.select(".section2")
+                .node().getBoundingClientRect();
+
+                  introHeight = introHeight.bottom;
+
+
+            d3.selectAll(sectionnew)
+                .style("left", width/2 - cont/2 + "px")
+                .style("top", "93%")
+                .style("opacity", 0)
+                .style("display", "block")
+                .transition()
+                .delay(300)
+                .duration(300)
+                .style("opacity", 1)
+
+              }
+
+
+                d3.select(".continue4")
+                    .on("click", function () {
+
+
+
+                    setTimeout( function () {
+                      continuechange(".continue4", ".continue5")
+                    },100);
+
+                    addLevies(131, section4);
+
+                    d3.select(".barlabel1")
+                         .transition()
+                         .duration(1000)
+                         .style("opacity",1)
+
+                    levy1.transition()
+                      .duration(1000).style("opacity",1)
+
+                    llabel1.transition().duration(1000).style("display","block")
+
+                    })
+
+
+////////////////
+                    d3.select(".continue5")
+                        .on("click", function () {
+
+
+
+                        setTimeout( function () {
+                          continuechange(".continue5", ".continue6")
+                        },100);
+
+                        addLevies(154, section5);
+
+                        levy2.transition()
+                          .duration(1000).style("opacity",1)
+
+                        llabel2.transition().duration(1000).style("display","block")
+
+
+                        })
+
+//////////////// Transport
+                      d3.select(".continue6")
+                          .on("click", function () {
+
+
+
+                          setTimeout( function () {
+                            continuechange(".continue6", ".continue7")
+                          },100);
+
+                          addLevies(160, section6);
+
+                          levy3.transition()
+                            .duration(1000).style("opacity",1)
+
+                          llabel3.transition().duration(1000).style("display","block")
+
+                          })
+
+
+//////////////// Storage
+                    d3.select(".continue7")
+                        .on("click", function () {
+
+
+                        // d3.select(".continue7").remove();
+                        setTimeout( function () {
+                          continuechange(".continue7", ".continue8")
+                        },1000);
+
+                        addLevies(165, section7);
+
+                        levy4.transition()
+                          .duration(1000).style("opacity",1)
+
+                        llabel4.transition().duration(1000).style("display","block")
+
+                        })
+
+//////////////// Margins
+                    d3.select(".continue8")
+                        .on("click", function () {
+                    //
+                    //
+
+                        setTimeout( function () {
+                          continuechange(".continue8", ".continue9");
+                          d3.select(".continue9").remove();
+                        },1000);
+
+                        addLevies(195, section8);
+                    //
+                        })
+
+//////////////// DSML
+                    // d3.select(".continue9")
+                    //     .on("click", function () {
+                    //
+                    //
+                    //
+                    //     setTimeout( function () {
+                    //       continuechange(".continue9", ".continue10")
+                    //     },1000);
+                    //
+                    //     addLevies(197, section9);
+                    //
+                    //     d3.select(".barlabel1")
+                    //       .transition()
+                    //       .duration(1000)
+                    //       .style("opacity", 1)
+                    //
+                    //
+                    //     })
+
+
+
+
+
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+    <div class="mainTitle">
+      How South Africa's Petrol Price is Calculated
+    </div>
+
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-72472423-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+
+<!-- Go to www.addthis.com/dashboard to customize your tools --> <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4d708b425b845fd3"></script>
+
+</body>
+</html>

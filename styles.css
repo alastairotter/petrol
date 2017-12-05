@@ -1,0 +1,356 @@
+body {
+    font-family: arial, sans-serif, helvetica;
+    background: #000;
+    color: lightgray;
+}
+
+.title {
+    font-family: "Lato", arial, sans-serif, helvetica;
+    font-size: 1.7em;
+    width: 100%;
+    text-align: center;
+    font-weight: 900;
+    color: lightgray;
+    margin-top: 20px;
+}
+
+
+.bar {
+  fill: #3e785d;
+}
+
+.bar2 {
+    fill:
+    #85ad9e;
+}
+
+.bar:hover {
+
+}
+
+.axis--x path {
+/*  display: none;*/
+}
+
+.axis--y path {
+
+}
+
+text {
+    fill: #eee;
+
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.line1 {
+    fill: none;
+    stroke: #fff;
+
+    stroke-width: 2px;
+}
+
+.line2 {
+    fill: none;
+    stroke: steelblue;
+
+    stroke-width: 2px;
+}
+
+.line3 {
+    fill: none;
+    stroke: yellow;
+
+    stroke-width: 2px;
+}
+
+#legend {
+    position: relative;
+}
+
+#legend2 {
+    position: relative;
+}
+
+.legend1box {
+    width: 15px;
+    height: 15px;
+    background: #3E785D;
+    float: left;
+
+}
+
+.legendtext {
+    float: left;
+    margin-left: 10px;
+    font-size: 0.75em;
+    padding-top: 2px;
+}
+
+.legend2box {
+    width: 15px;
+    height: 15px;
+    background: #85AD9E;
+    float: left;
+    margin-left: 10px;
+
+}
+
+.legend3box {
+    width: 15px;
+    height: 1.5px;
+    background: steelblue;
+    float: left;
+    margin-left: 10px;
+    margin-top: 6px;
+
+}
+
+.legend4box {
+    width: 15px;
+    height: 2px;
+    background: white;
+    float: left;
+    margin-left: 10px;
+    margin-top: 8px;
+
+}
+
+.annotation {
+    font-size: 0.8em;
+    fill: #85ad9e;
+
+}
+
+.annotateline {
+    stroke: #85ad9e;
+    stroke-width:0.8;
+}
+
+.a_note {
+     background: #fff;
+
+
+}
+
+.notetext {
+    color: #85ad9e;
+    font-size: 0.8em;
+    width: 200px;
+    line-height: 1.3em;
+
+
+}
+
+.inflation {
+    float: left;
+    font-size: 0.8em;
+    padding-top: 2px;
+    margin-left: 200px;
+    height: 50px;
+    max-width: 300px;
+
+}
+
+.detail {
+    line-height: 1.4em;
+
+}
+
+.detailtitle {
+    font-size: 1.2em;
+    font-weight: 900;
+    border-bottom: solid 1px ;
+    padding-bottom: 3px;
+    margin-bottom: 8px;
+
+
+}
+
+.detailtext {
+    color: #85ad9e;
+}
+
+.priceHover {
+    background: #fff;
+    width: 25px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 0.7em;
+    color: #000;
+    padding-top: 7px;
+}
+
+.label, .labelannotate {
+    font-size: 0.65em;
+    color: #85AD9E;
+    width: 40px;
+    text-align: center;
+    line-height: 1.2em;
+
+}
+
+.labelannotate {
+    color: steelblue;
+    line-height: 1.2em;
+}
+
+.bfpguides {
+    stroke: #85AD9E;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.levies, .bfp {
+    color: #fff;
+    font-size: 0.8em;
+    width: 200px;
+
+}
+
+.endnotetext {
+    font-size: 0.85em;
+    color: #85AD9E;
+}
+
+
+
+/* CHART 2 STYLES - ------------------------ */
+
+#chart2 {
+    position: relative;
+
+    margin-top: 0px;
+}
+
+.area {
+    fill: #305E49;
+
+}
+
+.area2 {
+    fill: #3E785D;
+}
+
+.secondtitle {
+    font-family: "Lato", arial, sans-serif, helvetica;
+    font-size: 1.1em;
+    width: auto;
+
+    position: relative;
+    left: 100px;
+    text-align: left;
+    font-weight: 900;
+    color: lightgray;
+
+
+
+    width: auto;
+    margin-bottom: 15px;
+
+}
+
+.text {
+    color: #85AD9E;
+    font-size: 0.8em;
+    position: relative;
+    left: 100px;
+    width: 400px;
+    line-height: 1.3em;
+}
+
+#element2 {
+    width: 100%;
+    padding-top: 50px;
+}
+
+.left {
+    float: left;
+    width: auto;
+    width: 600px;
+}
+
+
+
+
+
+#chart2 {
+
+}
+
+.levyDescriptions {
+    font-size:1em;
+    position: relative;
+    left: 100px;
+    width: 400px;
+}
+
+.description {
+    color: #85AD9E;
+}
+
+.descriptiontitle {
+    font-size: 1em;
+    padding-top: 10px;
+    color: #fff;
+    font-weight: 900;
+}
+
+.chart2labels {
+    visibility: hidden;
+}
+
+
+#chart2 .annotationline {
+    stroke: #85AD9E;
+    stroke-width:1;
+    shape-rendering: crispEdges;
+}
+
+#chart2 .label {
+    width: 200px;
+    color: #fff;
+    text-align: center;
+
+}
+
+.labeltoppercent {
+    visibility: hidden;
+}
+
+.levycheck {
+    margin-top: 10px;
+    width: 200px;
+    font-size: 1em;
+    color: #fff;
+}
+
+.levyExpl {
+    width: 300px;
+    font-size: 0.8em;
+    color: #85AD9E;
+    line-height: 1.3em;
+    margin-bottom: 8px;
+}
+
+.pumplabel {
+    width: 100px;
+    text-align: center;
+    background: #000;
+     color: #fff;
+    font-size: 1.1em;
+}
+
+.pumplabel2 {
+    width: 400px;
+    text-align: center;
+    color: #fff;
+}
+
+.label2 {
+  display: none;
+}
